@@ -29,10 +29,11 @@ celery_app.conf.beat_schedule = {
     #     'task': 'tasks.tasks.periodic_add_random_task',
     #     'schedule': 86400.0,  # Run every 86400 seconds (24 hours / everyday)
     # },
-    # Example periodic task (commented out)
+    # Example periodic task with proper arguments
     'periodic-task': {
         'task': 'celery_tasks.example_task',
         'schedule': 30.0,  # Run every 30 seconds
+        'args': ('Scheduled Task',)  # Provide the required 'name' argument
     },
 }
 

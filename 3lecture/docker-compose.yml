@@ -19,16 +19,18 @@ services:
       - ./src:/app/src
       - ./alembic.ini:/app/alembic.ini
       - ./migrations:/app/migrations
-      - ./.env:/app/.env
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
-    env_file:
-      - .env
     environment:
       - PYTHONPATH=/app/src
+      - DATABASE_URL=postgresql+asyncpg://username:password@db:5432/postgresdb
+      - SYNC_DATABASE_URL=postgresql://username:password@db:5432/postgresdb
+      - SECRET_KEY=your_super_secret_key_here_change_me
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
     working_dir: /app/src
 
   redis:
@@ -43,14 +45,16 @@ services:
     command: celery -A celery_app.celery_app worker --loglevel=info
     volumes:
       - ./src:/app/src
-      - ./.env:/app/.env
     depends_on:
       - redis
       - db
-    env_file:
-      - .env
     environment:
       - PYTHONPATH=/app/src
+      - DATABASE_URL=postgresql+asyncpg://username:password@db:5432/postgresdb
+      - SYNC_DATABASE_URL=postgresql://username:password@db:5432/postgresdb
+      - SECRET_KEY=your_super_secret_key_here_change_me
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
     working_dir: /app/src
 
   celery-beat:
@@ -58,14 +62,16 @@ services:
     command: celery -A celery_app.celery_app beat --loglevel=info
     volumes:
       - ./src:/app/src
-      - ./.env:/app/.env
     depends_on:
       - redis
       - db
-    env_file:
-      - .env
     environment:
       - PYTHONPATH=/app/src
+      - DATABASE_URL=postgresql+asyncpg://username:password@db:5432/postgresdb
+      - SYNC_DATABASE_URL=postgresql://username:password@db:5432/postgresdb
+      - SECRET_KEY=your_super_secret_key_here_change_me
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
     working_dir: /app/src
 
 volumes:
