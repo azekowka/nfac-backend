@@ -1,0 +1,1 @@
+# Assistant package for A2A multi-agent system 

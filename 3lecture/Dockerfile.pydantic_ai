@@ -1,0 +1,27 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Download TextBlob corpora
+RUN python -m textblob.download_corpora
+
+# Copy source code
+COPY ./src /app/src
+
+# Set Python path
+ENV PYTHONPATH=/app/src
+
+# Expose port
+EXPOSE 8001
+
+# Run PydanticAI agent
+CMD ["python", "-m", "assistant.pydantic_ai_agent"] 
