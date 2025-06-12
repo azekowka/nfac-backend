@@ -23,7 +23,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./src /app/src
 COPY alembic.ini /app/
 COPY migrations /app/migrations
-COPY .env /app/.env
 
 # Set working directory to src for Python imports
 WORKDIR /app/src
