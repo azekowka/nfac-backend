@@ -6,7 +6,7 @@ celery_app = Celery(
     "tasks",
     broker=settings.celery_broker_url,
     backend=settings.celery_result_backend,
-    include=["celery_tasks", "tasks.tasks"]
+    include=["celery_tasks", "tasks.tasks", "data_fetcher.tasks"]
 )
 
 # Celery configuration
@@ -22,20 +22,17 @@ celery_app.conf.update(
     result_expires=3600,
 )
 
-# Optional: Configure periodic tasks (Celery Beat)
-celery_app.conf.beat_schedule = {
-    # Add random task every minute
-    # 'add-random-task-every-minute': {
-    #     'task': 'tasks.tasks.periodic_add_random_task',
-    #     'schedule': 86400.0,  # Run every 86400 seconds (24 hours / everyday)
-    # },
-    # Example periodic task with proper arguments
-    'periodic-task': {
-        'task': 'celery_tasks.example_task',
-        'schedule': 30.0,  # Run every 30 seconds
-        'args': ('Scheduled Task',)  # Provide the required 'name' argument
-    },
-}
+# Import data fetcher scheduler (this will configure beat_schedule)
+from data_fetcher.scheduler import *
+
+# Optional: Add additional periodic tasks
+# celery_app.conf.beat_schedule.update({
+#     'example-periodic-task': {
+#         'task': 'celery_tasks.example_task',
+#         'schedule': 300.0,  # Run every 5 minutes
+#         'args': ('Scheduled Task',)
+#     },
+# })
 
 if __name__ == "__main__":
     celery_app.start() 

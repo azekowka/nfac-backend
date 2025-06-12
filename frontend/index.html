@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2A Chatbot - NFAC Project</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>A2A Chatbot</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-content">
+                    <div class="feature-section">
+                        <h3><i class="fas fa-info-circle"></i> Features</h3>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-brain"></i> Multi-Agent AI System</li>
+                            <li><i class="fas fa-chart-line"></i> Sentiment Analysis</li>
+                            <li><i class="fas fa-tags"></i> Keyword Extraction</li>
+                            <li><i class="fas fa-history"></i> Conversation History</li>
+                        </ul>
+                    </div>
+
+                    <div class="stats-section">
+                        <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                        <div class="stat-item">
+                            <span class="stat-label">Messages Sent:</span>
+                            <span class="stat-value" id="messageCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Session Time:</span>
+                            <span class="stat-value" id="sessionTime">00:00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg Response:</span>
+                            <span class="stat-value" id="avgResponse">0.0s</span>
+                        </div>
+                    </div>
+
+                    <div class="actions-section">
+                        <button class="action-btn" id="clearChatBtn">
+                            <i class="fas fa-trash"></i> Clear Chat
+                        </button>
+                        <button class="action-btn" id="exportChatBtn">
+                            <i class="fas fa-download"></i> Export Chat
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat Area -->
+            <section class="chat-container">
+                <div class="chat-header">
+                    <h2><i class="fas fa-comments"></i> A2A Multi-Agent Chatbot</h2>
+                    <div class="chat-info">
+                        <span class="agent-info">
+                            <i class="fas fa-cogs"></i> 
+                            LangChain + PydanticAI Agents
+                        </span>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <div class="welcome-content">
+                            <i class="fas fa-robot welcome-icon"></i>
+                            <h3>Welcome to A2A Chatbot!</h3>
+                            <p>I'm powered by multiple AI agents working together:</p>
+                            <ul>
+                                <li><strong>LangChain Agent</strong> - Google Gemini for intelligent responses</li>
+                                <li><strong>PydanticAI Agent</strong> - OpenAI + TextBlob for sentiment analysis</li>
+                            </ul>
+                            <p>Ask me anything and I'll provide thoughtful, analyzed responses!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="typing-text">AI is thinking...</span>
+                    </div>
+                    
+                    <form class="chat-input-form" id="chatForm">
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="messageInput" 
+                                placeholder="Type your message here..." 
+                                autocomplete="off"
+                                maxlength="1000"
+                            >
+                            <button type="submit" id="sendButton" disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="input-footer">
+                            <span class="char-count" id="charCount">0/1000</span>
+                            <span class="help-text">Press Enter to send</span>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>Initializing A2A Chatbot...</p>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal-overlay" id="errorModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Connection Error</h3>
+                    <button class="modal-close" id="closeErrorModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage">Unable to connect to the chatbot service. Please check if the backend is running.</p>
+                    <div class="error-details">
+                        <h4>Troubleshooting:</h4>
+                        <ul>
+                            <li>Ensure Docker services are running: <code>docker-compose up -d</code></li>
+                            <li>Check if A2A Chatbot is accessible at: <code>http://localhost:8102</code></li>
+                            <li>Verify API keys are set in environment variables</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="retryConnection">
+                        <i class="fas fa-redo"></i> Retry Connection
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

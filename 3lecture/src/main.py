@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from auth.api import router as auth_router
 from database import get_async_db
 from tasks.api import router as tasks_router
+from data_fetcher.api import router as data_fetcher_router
 from celery_tasks import example_task, send_notification, process_data
 from redis_client import test_redis_connection
 
@@ -13,6 +14,7 @@ app = FastAPI()
 
 app.include_router(auth_router, tags=["auth"])
 app.include_router(tasks_router, tags=["tasks"])
+app.include_router(data_fetcher_router, tags=["data-fetcher"])
 
 
 @app.get("/")
