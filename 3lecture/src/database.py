@@ -4,6 +4,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from config import settings
 
+# Async database setup
 async_engine = create_async_engine(
     settings.database_url.replace('postgresql://', 'postgresql+asyncpg://'),
     echo=True
@@ -14,7 +15,7 @@ AsyncSessionLocal = sessionmaker(
     expire_on_commit=False
 )
 
-
+# Sync database setup
 sync_engine = create_engine(
     settings.sync_database_url,
     echo=True)
@@ -23,6 +24,10 @@ SyncSessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False
 )
+
+# Legacy exports for backward compatibility
+engine = sync_engine
+SessionLocal = SyncSessionLocal
 
 Base = declarative_base()
 
@@ -38,3 +43,9 @@ def get_sync_db():
         yield db
     finally:
         db.close()
+
+
+# Legacy function for backward compatibility
+def get_db():
+    """Legacy function that returns sync database session"""
+    return get_sync_db()

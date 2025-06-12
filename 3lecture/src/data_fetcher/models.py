@@ -1,11 +1,8 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, Float, JSON
-from sqlalchemy.ext.declarative import declarative_base
-from database import engine
+from database import engine, Base
 from datetime import datetime
 from typing import Optional, Dict, Any
 import json
-
-Base = declarative_base()
 
 class FetchedNews(Base):
     """Database model for fetched news articles"""

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, and_, func
+from sqlalchemy import desc, and_, func, text
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 from pydantic import BaseModel
@@ -310,22 +310,26 @@ def get_task_status(task_id: str):
 
 @router.get("/health")
 def health_check():
-    """Health check endpoint for the data fetcher service"""
-    
+    """Health check endpoint for data fetcher service"""
     try:
-        # Check database connectivity
         db = SessionLocal()
-        db.execute("SELECT 1")
-        db.close()
         
-        # Check Celery connectivity
-        inspect = celery_app.control.inspect()
-        stats = inspect.stats()
+        # Test database connection
+        db.execute(text("SELECT 1"))
+        
+        # Test Redis connection through Celery
+        celery_status = celery_app.control.inspect().ping()
+        
+        # Test recent fetch status
+        recent_fetch = db.query(FetchLog).order_by(desc(FetchLog.start_time)).first()
+        
+        db.close()
         
         return {
             "status": "healthy",
             "database": "connected",
-            "celery": "connected" if stats else "disconnected",
+            "celery": "connected" if celery_status else "disconnected",
+            "last_fetch": recent_fetch.start_time.isoformat() if recent_fetch else None,
             "timestamp": datetime.utcnow().isoformat()
         }
         

@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean, JSON
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from database import engine, get_db
+from database import engine, get_db, Base, SessionLocal
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 import json
@@ -10,8 +9,6 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-Base = declarative_base()
 
 class ChatHistoryDB(Base):
     """Database model for chat history"""
@@ -66,7 +63,6 @@ class ChatService:
     ) -> int:
         """Save chat message to database"""
         try:
-            from database import SessionLocal
             db = SessionLocal()
             
             # Prepare LangChain data
@@ -142,7 +138,6 @@ class ChatService:
     ) -> List[Dict[str, Any]]:
         """Get chat history for a user"""
         try:
-            from database import SessionLocal
             db = SessionLocal()
             
             query = db.query(ChatHistoryDB).filter(ChatHistoryDB.user_id == user_id)
@@ -198,7 +193,6 @@ class ChatService:
     def get_user_stats(self, user_id: str) -> Dict[str, Any]:
         """Get statistics for a user"""
         try:
-            from database import SessionLocal
             db = SessionLocal()
             
             # Basic stats
@@ -260,7 +254,6 @@ class ChatService:
     def get_recent_sessions(self, user_id: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Get recent sessions for a user"""
         try:
-            from database import SessionLocal
             db = SessionLocal()
             
             # Get distinct sessions with latest message date
